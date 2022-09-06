@@ -1,32 +1,30 @@
+## qc.R ##
+#
+# Purpose: perform the quality control across all replicates 
+# Optional if you have only n=1
+#
+###########
+
+# load packages
+## packages
 require(ggplot2)
 
+## required for PNG driver
+## Optional for other servers
 options(bitmapType="cairo")
 
-## meta file 1
-## meta file 2
+## Read the QC reports
 meta1 = read.table("../A1/A1/seurat/QC.txt",header=TRUE)
 meta1$sample = rep("A1")
-head(meta1)
 
 meta2 = read.table("../T1/T1/seurat/QC.txt",header=TRUE)
 meta2$sample = rep("T1")
-head(meta2)
 
 meta3 = read.table("../S1/S1/seurat/QC.txt",header=TRUE)
 meta3$sample = rep("S1")
-head(meta3)
-
-filterDATA <- function(testdata)
-{
-	print(table(testdata$percent.mt>40))
-}
-filterDATA(meta1)
-filterDATA(meta2)
 
 meta = rbind(meta1,meta2,meta3)
 summary(meta)
-
-#orig.ident	nCount_RNA	nFeature_RNA	nCount_ATAC	nFeature_ATAC	nucleosome_signal	nucleosome_percentile	TSS.enrichment	TSS.percentile	percent.mt
 
 ## plot nCount_RNA
 p1 <- ggplot(meta,aes(x=nCount_RNA,fill=sample)) + geom_density(alpha=0.6) + theme_bw() + theme(panel.grid=element_blank())
@@ -48,7 +46,6 @@ p1 <- p1 + scale_fill_manual(values=c("red","orange","yellow","green","blue","tu
 png("percent.mt.png",width=1500,height=1300,res=300)
 print(p1)
 dev.off()
-
 
 ## plot correlation between nCount_RNA and nFeature_RNA
 p1 <- ggplot(meta,aes(x=nCount_RNA,y=nFeature_RNA)) + geom_bin_2d(bins=1000) +scale_fill_continuous(type = "viridis")+ theme_bw() + theme(panel.grid=element_blank())+scale_x_log10()
