@@ -40,6 +40,10 @@ Rscript integration_scRNAseq.R
 ## Note: if running on RStudio, you can change celltype = args[1] into celltype = "CM"
 Rscript findMARKER.R CM
 
+# Utility Function
+## Plot dotplot and heatmap for top 5 markers
+Rscript dotplot.R  
+
 
 ```  
   
