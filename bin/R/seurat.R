@@ -15,10 +15,7 @@ library(Seurat)
 ## SCTransform-specific
 library(sctransform)
 library(glmGamPoi)
-## For scATAC
-###library(GenomeInfoDb)
-###library(EnsDb.Hsapiens.v79)
-## General packages
+# General packages
 library(scales)
 library(ggplot2)
 library(patchwork)
@@ -42,6 +39,7 @@ counts = Read10X("filtered_feature_bc_matrix")
 ### min.cells = 10 and min.features = 300 are just default values (can be tuned again if cell numbers too little)
 heart <- CreateSeuratObject(counts = counts, project = "FB", min.cells = 10, min.features = 300)
 
+
 # Section 1: Quality control per sample
 ## Calculate percentage of reads contributed by mitochondrial gene, and stored in "percent.mt" in meta.data
 ## Depending on the genome, hg tends to be "MT-". Other genome might be "Mt-"
@@ -53,11 +51,15 @@ write.table(qc,file="QC.txt",sep="\t",quote=FALSE)
 saveRDS(heart,file="heart.preQC.RDS")
 
 
-if(1){
+# Section 2: Filter low-quality cells based on "aggregated QC" with other replictaes.
 heart = readRDS("heart.preQC.RDS")
-##heart = readRDS("heart.preQC.RDS")
+## various thresholding was set up based on the threshold established with the other replicates.
+## See qc.R
 heart <- subset(heart, subset = nFeature_RNA > 900 & nFeature_RNA<15000 & nCount_RNA>1000 & nCount_RNA<10000 & percent.mt < 10)
+## Checkpoint 2: save as RDS for the next step of analysis (assumed cleaned data, removed low quality cells)
 saveRDS(heart, file="heart.postQC.RDS")
+
+
 
 heart <- SCTransform(heart, method="glmGamPoi", vars.to.regress = "percent.mt", verbose = FALSE)
 saveRDS(heart, file = "heart.postQC.2.RDS")
