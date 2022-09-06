@@ -34,6 +34,13 @@ Rscript qc.R
 # Once you have all sctransformed data
 ## This is the step for data integration
 Rscript integration_scRNAseq.R
+
+# Perform Gene Marker Identitifcation
+## Eg if you are interested in cluster "CM"
+## Note: if running on RStudio, you can change celltype = args[1] into celltype = "CM"
+Rscript findMARKER.R CM
+
+
 ```  
   
 
